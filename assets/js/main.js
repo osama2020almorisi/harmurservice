@@ -95,6 +95,9 @@ const HarMurApp = {
             this.initServiceWorker();
         }
         
+        // Initialize theme switcher
+        this.initThemeSwitcher();
+        
         // Mark as initialized
         this.state.isInitialized = true;
         this.state.currentPage = this.getCurrentPage();
@@ -159,6 +162,53 @@ const HarMurApp = {
         
         // Initialize intersection observer for elements
         this.initIntersectionObserver();
+    },
+    
+    // ============================================
+    // THEME SWITCHER
+    // ============================================
+    
+    initThemeSwitcher: function() {
+        const themeToggle = document.getElementById('theme-toggle');
+        const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+        
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('harmur_theme');
+        
+        if (savedTheme === 'dark' || (!savedTheme && prefersDarkScheme.matches)) {
+            document.body.classList.add('dark-mode');
+        }
+        
+        // Toggle theme on button click
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                const isDarkMode = document.body.classList.toggle('dark-mode');
+                
+                // Update icon and save preference
+                this.saveThemePreference(isDarkMode ? 'dark' : 'light');
+                
+                // Dispatch event for other components
+                this.dispatchEvent('theme:changed', { mode: isDarkMode ? 'dark' : 'light' });
+                
+                // Track theme change
+                this.trackEvent('theme_toggle', { mode: isDarkMode ? 'dark' : 'light' });
+            });
+        }
+        
+        // Listen for system theme changes
+        prefersDarkScheme.addEventListener('change', (e) => {
+            if (!localStorage.getItem('harmur_theme')) {
+                if (e.matches) {
+                    document.body.classList.add('dark-mode');
+                } else {
+                    document.body.classList.remove('dark-mode');
+                }
+            }
+        });
+    },
+    
+    saveThemePreference: function(theme) {
+        localStorage.setItem('harmur_theme', theme);
     },
     
     // ============================================
@@ -616,7 +666,8 @@ const HarMurApp = {
             navigation: document.querySelector('nav'),
             contactForm: document.querySelector('#contact-form, .contact-form'),
             heroSection: document.querySelector('.hero'),
-            servicesSection: document.querySelector('.services-preview')
+            servicesSection: document.querySelector('.services-preview'),
+            themeToggle: document.getElementById('theme-toggle')
         };
     },
     
@@ -898,6 +949,7 @@ const HarMurApp = {
     // Reset application
     reset: function() {
         localStorage.removeItem('harmur_preferences');
+        localStorage.removeItem('harmur_theme');
         sessionStorage.clear();
         this.state.userPreferences = {};
         this.dispatchEvent('app:reset');
@@ -1116,65 +1168,3 @@ Bei Fragen oder Problemen kontaktieren Sie uns unter:
 'color: #00a86b; font-size: 16px;',
 'color: #666; font-size: 14px;'
 );
-
-
-
-
-
-
-// أضف هذا الكود في ملف main.js داخل init() function
-
-// في قسم initFeatures() أو إنشاء قسم جديد:
-
-initThemeSwitcher: function() {
-    const themeToggle = document.getElementById('theme-toggle');
-    const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
-    
-    // Load saved theme preference
-    const savedTheme = localStorage.getItem('harmur_theme');
-    
-    if (savedTheme === 'dark' || (!savedTheme && prefersDarkScheme.matches)) {
-        document.body.classList.add('dark-mode');
-    }
-    
-    // Toggle theme on button click
-    if (themeToggle) {
-        themeToggle.addEventListener('click', () => {
-            const isDarkMode = document.body.classList.toggle('dark-mode');
-            
-            // Update icon and save preference
-            this.saveThemePreference(isDarkMode ? 'dark' : 'light');
-            
-            // Dispatch event for other components
-            this.dispatchEvent('theme:changed', { mode: isDarkMode ? 'dark' : 'light' });
-            
-            // Track theme change
-            this.trackEvent('theme_toggle', { mode: isDarkMode ? 'dark' : 'light' });
-        });
-    }
-    
-    // Listen for system theme changes
-    prefersDarkScheme.addEventListener('change', (e) => {
-        if (!localStorage.getItem('harmur_theme')) {
-            if (e.matches) {
-                document.body.classList.add('dark-mode');
-            } else {
-                document.body.classList.remove('dark-mode');
-            }
-        }
-    });
-},
-
-saveThemePreference: function(theme) {
-    localStorage.setItem('harmur_theme', theme);
-},
-
-// أضف استدعاء الدالة في init()
-init: function() {
-    // ... الكود الحالي ...
-    
-    // Initialize theme switcher
-    this.initThemeSwitcher();
-    
-    // ... باقي الكود ...
-},
