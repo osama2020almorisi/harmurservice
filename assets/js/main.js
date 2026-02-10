@@ -1116,3 +1116,65 @@ Bei Fragen oder Problemen kontaktieren Sie uns unter:
 'color: #00a86b; font-size: 16px;',
 'color: #666; font-size: 14px;'
 );
+
+
+
+
+
+
+// أضف هذا الكود في ملف main.js داخل init() function
+
+// في قسم initFeatures() أو إنشاء قسم جديد:
+
+initThemeSwitcher: function() {
+    const themeToggle = document.getElementById('theme-toggle');
+    const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+    
+    // Load saved theme preference
+    const savedTheme = localStorage.getItem('harmur_theme');
+    
+    if (savedTheme === 'dark' || (!savedTheme && prefersDarkScheme.matches)) {
+        document.body.classList.add('dark-mode');
+    }
+    
+    // Toggle theme on button click
+    if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            const isDarkMode = document.body.classList.toggle('dark-mode');
+            
+            // Update icon and save preference
+            this.saveThemePreference(isDarkMode ? 'dark' : 'light');
+            
+            // Dispatch event for other components
+            this.dispatchEvent('theme:changed', { mode: isDarkMode ? 'dark' : 'light' });
+            
+            // Track theme change
+            this.trackEvent('theme_toggle', { mode: isDarkMode ? 'dark' : 'light' });
+        });
+    }
+    
+    // Listen for system theme changes
+    prefersDarkScheme.addEventListener('change', (e) => {
+        if (!localStorage.getItem('harmur_theme')) {
+            if (e.matches) {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+        }
+    });
+},
+
+saveThemePreference: function(theme) {
+    localStorage.setItem('harmur_theme', theme);
+},
+
+// أضف استدعاء الدالة في init()
+init: function() {
+    // ... الكود الحالي ...
+    
+    // Initialize theme switcher
+    this.initThemeSwitcher();
+    
+    // ... باقي الكود ...
+},

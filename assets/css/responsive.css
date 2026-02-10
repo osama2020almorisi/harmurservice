@@ -1110,3 +1110,71 @@
         flex-direction: row !important;
     }
 }
+
+
+
+
+
+
+
+/* أضف هذا الكود في ملف responsive.css */
+
+/* Mobile adjustments for theme switcher */
+@media (max-width: 768px) {
+    .theme-switch-container {
+        top: auto;
+        bottom: 20px;
+        right: 20px;
+    }
+    
+    .theme-switch {
+        width: 50px;
+        height: 25px;
+    }
+    
+    .theme-switch-slider {
+        width: 19px;
+        height: 19px;
+    }
+    
+    body.dark-mode .theme-switch-slider {
+        transform: translateX(25px);
+    }
+    
+    .theme-switch i {
+        font-size: 12px;
+    }
+    
+    .theme-switch .fa-moon {
+        left: 8px;
+    }
+    
+    .theme-switch .fa-sun {
+        right: 8px;
+    }
+}
+
+/* For very small screens */
+@media (max-width: 480px) {
+    .theme-switch-container {
+        bottom: 15px;
+        right: 15px;
+    }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+    .theme-switch {
+        min-width: 50px;
+        min-height: 50px;
+        border-radius: 50%;
+    }
+    
+    .theme-switch:hover {
+        transform: none;
+    }
+    
+    .theme-switch:active {
+        transform: scale(0.95);
+    }
+}
